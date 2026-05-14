@@ -33,12 +33,12 @@ hostnamectl set-hostname ISP 2>/dev/nill || hostaname ISP
 hostname ISP
 
 mkdir -p "/etc/net/ifaces/$WAN"
-cat > "/etc/net/ifaces/$WAN/options" << EOF
+cat <<EOF > "/etc/net/ifaces/$WAN/options"
 TYPE=eth
 BOOTPTOTO=dhcp
 EOF
 
-cat "etc/net/ifaces/$WAN/options"
+cat "/etc/net/ifaces/$WAN/options"
 
 for iface in "$LAN1" "$LAN2"; do
 	mkdir -p "/etc/net/ifaces/$iface"
