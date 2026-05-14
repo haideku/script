@@ -20,9 +20,6 @@ done
 LAN1="${ALL_IFACES[0]}"
 LAN2="${ALL_IFACES[1]}"
 
-log "Внутренний интерфейс 1: $LAN1"
-log "Внутренний интерфейс 2: $LAN2"
-
 LAN1_IP="172.16.1.1/28"
 LAN2_IP="172.16.2.1/28"
 
@@ -43,7 +40,7 @@ EOF
 
 cat "etc/net/ifaces/$WAN/options"
 
-fot iface in "$LAN1" "$LAN2"; do
+for iface in "$LAN1" "$LAN2"; do
 	mkdir -p "/etc/net/ifaces/$iface"
 	echo "TYPE=eth" > '/etc/net/ifaces/$iface/options"
 done
