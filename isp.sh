@@ -33,22 +33,20 @@ hostnamectl set-hostname ISP 2>/dev/nill || hostaname ISP
 hostname ISP
 
 mkdir -p "/etc/net/ifaces/$WAN"
-cat <<EOF > /etc/net/ifaces/$WAN/options
-TYPE=eth
-BOOTPTOTO=dhcp
-EOF
+echo "TYPE=eth" > /etc/net/ifaces/$WAN/options
+echo "BOOTPTOTO=dhcp" >> /etc/net/ifaces/$WAN/options
 
 cat "/etc/net/ifaces/$WAN/options"
 
 for iface in "$LAN1" "$LAN2"; do
 	mkdir -p "/etc/net/ifaces/$iface"
-	echo "TYPE=eth" > '/etc/net/ifaces/$iface/options"
+	echo "TYPE=eth" > "/etc/net/ifaces/$iface/options"
 done
 
 echo "$LAN1_IP" > "/etc/net/ifaces/$LAN1/ipv4address"
 echo "$LAN2_IP" > "/etc/net/ifaces/$LAN2/ipv4address"
 
-apt-get update && apt-get upgrade -y
+apt-get update && apt-get dist-upgrade -y
 apt-get install iptables -y
 
 iptables -t nat -A POSTROUTING -s "$LAN1_NET" -o "$WAN" -j MASQUERADE
@@ -57,7 +55,6 @@ iptables -t nat -A POSTROUTING -s "$LAN2_NET" -o "$WAN" -j MASQUERADE
 iptables-save >> /etc/sysconfig/iptables
 systemctl enable --now iptables.service
 
-log "Проверка Firewall"
 iptables -t nat -L -n -v
 
 
