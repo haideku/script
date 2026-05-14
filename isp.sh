@@ -34,7 +34,7 @@ hostname ISP
 
 mkdir -p "/etc/net/ifaces/$WAN"
 echo "TYPE=eth" > /etc/net/ifaces/$WAN/options
-echo "BOOTPTOTO=dhcp" >> /etc/net/ifaces/$WAN/options
+echo "BOOTPROTO=dhcp" >> /etc/net/ifaces/$WAN/options
 echo "ONBOOT=yes" >> /etc/net/ifaces/$WAN/options
 
 cat "/etc/net/ifaces/$WAN/options"
