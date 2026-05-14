@@ -33,7 +33,7 @@ hostnamectl set-hostname ISP 2>/dev/nill || hostaname ISP
 hostname ISP
 
 mkdir -p "/etc/net/ifaces/$WAN"
-cat <<EOF > "/etc/net/ifaces/$WAN/options"
+cat <<EOF > /etc/net/ifaces/$WAN/options
 TYPE=eth
 BOOTPTOTO=dhcp
 EOF
