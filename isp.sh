@@ -50,6 +50,8 @@ echo "$LAN2_IP" > "/etc/net/ifaces/$LAN2/ipv4address"
 echo "$LAN1_ROUTE" > "/etc/net/ifaces/$LAN1/ipv4route"
 echo "$LAN2_ROUTE" > "/etc/net/ifaces/$LAN2/ipv4route"
 
+echo "nameserver	8.8.8.8" > "/etc/resolv.conf"
+
 apt-get update && apt-get dist-upgrade -y
 apt-get install iptables -y
 
@@ -70,3 +72,11 @@ fi
 systemctl restart network
 
 sysctl net.ipv4.ip_forward
+
+ip link set "$LAN1" down
+ip link set "$LAN2" down
+
+ping -c4 8.8.8.8
+
+ip link set "$LAN1" up
+ip link set "$LAN2" up
