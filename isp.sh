@@ -35,6 +35,7 @@ hostname ISP
 mkdir -p "/etc/net/ifaces/$WAN"
 echo "TYPE=eth" > /etc/net/ifaces/$WAN/options
 echo "BOOTPTOTO=dhcp" >> /etc/net/ifaces/$WAN/options
+echo "ONBOOT=yes" >> /etc/net/ifaces/$WAN/options
 
 cat "/etc/net/ifaces/$WAN/options"
 
@@ -45,6 +46,9 @@ done
 
 echo "$LAN1_IP" > "/etc/net/ifaces/$LAN1/ipv4address"
 echo "$LAN2_IP" > "/etc/net/ifaces/$LAN2/ipv4address"
+
+echo "$LAN1_ROUTE" > "/etc/net/ifaces/$LAN1/ipv4route"
+echo "$LAN2_ROUTE" > "/etc/net/ifaces/$LAN2/ipv4route"
 
 apt-get update && apt-get dist-upgrade -y
 apt-get install iptables -y
