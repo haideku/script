@@ -28,16 +28,12 @@ LAN1_ROUTE="default via 172.16.1.1"
 
 mkdir -p "/etc/net/ifaces/$LAN1" "/etc/net/ifaces/$LAN2"
 
-echo "TYPE=eth" > /etc/net/ifaces/$LAN1/options
-echo "$LAN1_IP" > "/etc/net/ifaces/$LAN1/ipv4address"
-echo "$LAN1_ROUTE" > "/etc/net/ifaces/$LAN1/ipv4route"
-
 echo "nameserver	8.8.8.8" > "/etc/resolv.conf"
 
 for entry in "${VLAN_LIST[@]}"; do
     vid="${entry%%:*}"
     ip_cidr="${entry##*:}"
-    vlan_iface="vlan$vid"
+    vlan_iface="$VLAN_PARENT.$vid"
 
 	mkdir -p "/etc/net/ifaces/$vlan_iface"
 
@@ -51,3 +47,6 @@ apt-get update && apt-get dist-upgrade -y
 apt-get install iptables
 
 
+echo "TYPE=eth" > /etc/net/ifaces/$LAN1/options
+echo "$LAN1_IP" > "/etc/net/ifaces/$LAN1/ipv4address"
+echo "$LAN1_ROUTE" > "/etc/net/ifaces/$LAN1/ipv4route"
