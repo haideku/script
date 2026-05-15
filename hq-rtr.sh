@@ -47,6 +47,12 @@ for entry in "${VLAN_LIST[@]}"; do
 	echo "$ip_cidr" > "/etc/net/ifaces/$vlan_iface/ipv4address"
 done
 
+
+sed -i 's/^net\.ipv4\.ip_forward = 0/net.ipv4.ip_forward = 1/' /etc/net/sysctl.conf
+if ! grep -q '^net\.ipv4\.ip_forward = 1' /etc/net/sysctl.conf; then
+	echo 'net.ipv4.ip_forward = 1' >> /etc/net/sysctl.conf
+fi
+
 apt-get update && apt-get dist-upgrade -y
 apt-get install iptables
 
@@ -54,3 +60,5 @@ apt-get install iptables
 echo "TYPE=eth" > /etc/net/ifaces/$LAN1/options
 echo "$LAN1_IP" > "/etc/net/ifaces/$LAN1/ipv4address"
 echo "$LAN1_ROUTE" > "/etc/net/ifaces/$LAN1/ipv4route"
+
+systemctl restart network
