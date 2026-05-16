@@ -17,7 +17,6 @@ VLAN_LIST=(
 ALL_IFACES=()
 for iface in $(ls /sys/class/net | sort); do
 	[[ "$iface" == "lo" ]] && continue
-	[[ "$iface" == "$WAN" ]] && continue
 	ALL_IFACES+=("$iface")
 done
 
