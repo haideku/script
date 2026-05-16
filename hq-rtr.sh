@@ -36,8 +36,8 @@ echo "$LAN1_IP" > "/etc/net/ifaces/$LAN1/ipv4address"
 echo "$LAN1_ROUTE" > "/etc/net/ifaces/$LAN1/ipv4route"
 
 echo "TYPE=eth" > "/etc/net/ifaces/$LAN2/options"
-echo "nameserver	77.88.8.8" > "/etc/resolv.conf"
-echo "nameserver	8.8.8.8" >> "/etc/resolv.conf"
+echo "nameserver	77.88.8.8" > "/etc/net/ifaces/$LAN1/resolv.conf"
+echo "nameserver	8.8.8.8" >> "/etc/net/ifaces/$LAN1/resolv.conf"
 
 for entry in "${VLAN_LIST[@]}"; do
     vid="${entry%%:*}"
