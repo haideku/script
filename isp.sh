@@ -80,3 +80,5 @@ ping -c4 8.8.8.8
 
 ip link set "$LAN1" up
 ip link set "$LAN2" up
+
+exec bash
