@@ -36,7 +36,8 @@ echo "$LAN1_IP" > "/etc/net/ifaces/$LAN1/ipv4address"
 echo "$LAN1_ROUTE" > "/etc/net/ifaces/$LAN1/ipv4route"
 
 echo "TYPE=eth" > "/etc/net/ifaces/$LAN2/options"
-echo "nameserver	8.8.8.8" > "/etc/resolv.conf"
+echo "nameserver	77.88.8.8" > "/etc/resolv.conf"
+echo "nameserver	8.8.8.8" >> "/etc/resolv.conf"
 
 for entry in "${VLAN_LIST[@]}"; do
     vid="${entry%%:*}"
@@ -59,7 +60,19 @@ fi
 
 systemctl restart network
 
+useradd net_admin
+echo "net_admin:P@ssw0rd"|chpasswd
+usermod -aG wheel net_admin
+echo "net_admin ALL=(ALL:ALL) NOPASSWD: ALL" > /etc/sudoers.d/net_admin
+
+
 apt-get update && apt-get dist-upgrade -y
+
+apt-get install iptables -y
+
+iptables -t nat -A POSTROUTING -o $LAN1 -j MASQUERADE
+iptables-save >> /etc/sysconfig/iptables
+systemctl enable --now iptables.service
 
 mkdir -p "/etc/net/ifaces/gre1"
 
@@ -81,62 +94,68 @@ systemctl enable --now frr.service
 
 cat <<'EOF' > /etc/frr/frr.conf
 
-interface gre
-
-no ip ospf passive
-
-exit
-
+frr default trditional
+hostanem hq-rtr.au-team.irpo
+log file /var/log/frr/frr.log
+no ipv6 forwarding
 !
-
 interface gre1
-
-ip ospf area 0
-
-ip ospf authentication
-
-ip ospf authentication-key P@ssw0rd
-
-no ip ospf passive
-
+	ip ospf authentication message-digest
+	ip ospf message-digest-key 1 md5 P@ssw0rd
+	no ip ospf passive
 exit
-
 !
-
-interface "$VLAN_PARENT.100"
-
-ip ospf area 0
-
-exit
-
-!
-
-interface "$VLAN_PARENT.200"
-
-ip ospf area 0
-
-exit
-
-!
-
-interface "$VLAN_PARENT.999"
-
-ip ospf area 0
-
-exit
-
-!
-
 router ospf
-
-passive-interface default
-
+	passive-interface default
+	network 10.10.10.0/30 area 0
+	network 192.168.99.0/29 area 0
+	network 192.168.100.0/27 area 0
+	network 192.168.200.0/24 area 0
 exit
+!
 
 EOF
 
 
-apt-get install iptables
+apt-get update && apt-get install dhcp-server -y
 
+sed -i "s/DHCPDARGS=/DHCPDARGS='$VLAN_PARENT.200'/g" /etc/susconfig/dhcpd
+cat <<'EOF' > /etc/dhcp/dhcp.conf
+option domain-name "au-team.irpo";
+option domain-name-servers 192.168.100.2;
+default-lease-time 6000;
+max-lease-time 72000;
+authoritative;
+subnet 192.168.200.0 netmask 255.255.255.0 {
+	range 192.168.200.2 192.168.200.254;
+	option routers 192.168.200.1;
+}
+EOF
 
+systemctl enable --now dhcpd.service
+
+apt-get update && apt-get install dnsmasq -y
+
+cat <<'EOF' > /etc/dnsmasq.conf
+no-hosts
+server=77.88.8.8
+cache-size=1000
+all-servers
+no-negcache
+interface=*
+host-record=hq-rtr.au-team.irpo,192.168.100.1
+host-record=hq-rtr.au-team.irpo,192.168.200.1
+host-record=hq-rtr.au-team.irpo,192.168.99.1
+host-record=hq-srv.au-team.irpo,192.168.100.2
+host-record=hq-cli.au-team.irpo,192.168.200.2
+address=/br-rtr.au-team.irpo/192.168.0.1
+address=/br-srv.au-team.irpo/192.168.0.2
+address=/docker.au-team.irpo/172.16.1.1
+address=/web.au-team.irpo/172.16.2.1
+EOF
+
+systemctl enable --now dnsmasq.service
+
+timedatectl set-timezone Asia/Vladivostok
 systemctl restart network
+exec bash
