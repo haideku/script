@@ -78,22 +78,63 @@ apt-get install frr -y
 
 sed -i "s/ospfd=no/ospfd=yes/g" /etc/frr/daemons
 systemctl enable --now frr.service
-vtysh
-configure terminal
-route ospf
-passive-interface default
-network 10.10.10.0/30 area 0
-network 192.168.100.0/27 area 0
-network 192.168.200.0/24 area 0
-network 192.168.99.0/29 area 0
-exit
-interface gre1
+
+cat <<'EOF' > /etc/frr/frr.conf
+
+interface gre
+
 no ip ospf passive
-ip ospf authentication message-digest
-ip ospf message-digest-key md5 P@ssw0rd
-end
-wr mem
+
 exit
+
+!
+
+interface gre1
+
+ip ospf area 0
+
+ip ospf authentication
+
+ip ospf authentication-key P@ssw0rd
+
+no ip ospf passive
+
+exit
+
+!
+
+interface "$VLAN_PARENT.100"
+
+ip ospf area 0
+
+exit
+
+!
+
+interface "$VLAN_PARENT.200"
+
+ip ospf area 0
+
+exit
+
+!
+
+interface "$VLAN_PARENT.999"
+
+ip ospf area 0
+
+exit
+
+!
+
+router ospf
+
+passive-interface default
+
+exit
+
+EOF
+
 
 apt-get install iptables
 
