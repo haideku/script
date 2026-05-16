@@ -6,7 +6,6 @@ if [[ $EUID -ne 0 ]]; then
 fi
 
 hostnamectl set-hostname hq-rtr.au-team.irpo
-exec bash
 
 VLAN_LIST=(
     "100:192.168.100.1/27"
