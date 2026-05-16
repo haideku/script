@@ -8,6 +8,8 @@ fi
 hostnamectl set-hostname hq-rtr.au-team.irpo
 exec bash
 
+apt-get update && apt-get dist-upgrade -y
+
 VLAN_LIST=(
     "100:192.168.100.1/27"
     "200:192.168.200.1/28"
@@ -53,7 +55,41 @@ if ! grep -q '^net\.ipv4\.ip_forward = 1' /etc/net/sysctl.conf; then
 	echo 'net.ipv4.ip_forward = 1' >> /etc/net/sysctl.conf
 fi
 
-apt-get update && apt-get dist-upgrade -y
+mkdir -p /etc/net/ifaces/gre1
+
+/etc/net/ifaces/gre1/options
+echo "TYPE=iptun" > /etc/net/ifaces/gre1/options
+echo "TUNTYPE=gre" >> /etc/net/ifaces/gre1/options
+echo "TUNLOCAL=172.16.1.2" >> /etc/net/ifaces/gre1/options
+echo "TUNREMOTE=172.16.2.2" >> /etc/net/ifaces/gre1/options
+echo "TUNOPTIONS='ttl 64'" >> /etc/net/ifaces/gre1/options
+echo "HOST=$LAN1" >> /etc/net/ifaces/gre1/options
+
+echo "10.10.10.1/30" > /etc/net/ifaces/gre1/ipv4address
+
+systemctl restart network
+
+apt-get install frr -y
+
+sed -i "s/ospfd=no/ospfd=yes/g" /etc/frr/daemons
+systemctl enable --now frr.service
+vtysh
+configure terminal
+route ospf
+passive-interface default
+network 10.10.10.0/30 area 0
+network 192.168.100.0/27 area 0
+network 192.168.200.0/24 area 0
+network 192.168.99.0/29 area 0
+exit
+interface gre1
+no ip ospf passive
+ip ospf authentication message-digest
+ip ospf message-digest-key md5 P@ssw0rd
+end
+wr mem
+exit
+
 apt-get install iptables
 
 
