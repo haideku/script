@@ -35,8 +35,6 @@ echo "TYPE=eth" > "/etc/net/ifaces/$LAN2/options"
 echo "nameserver	77.88.8.8" > "/etc/net/ifaces/$LAN1/resolv.conf"
 echo "nameserver	8.8.8.8" >> "/etc/net/ifaces/$LAN/resolv.conf"
 
-echo $'search  au-team.irpo\nnameserver  192.168.100.2' > /etc/net/ifaces/$LAN2/resolv.conf
-
 
 sed -i 's/^net\.ipv4\.ip_forward = 0/net.ipv4.ip_forward = 1/' /etc/net/sysctl.conf
 if ! grep -q '^net\.ipv4\.ip_forward = 1' /etc/net/sysctl.conf; then
