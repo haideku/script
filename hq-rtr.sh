@@ -29,26 +29,28 @@ VLAN_PARENT="$LAN2"
 LAN1_IP="172.16.1.2/28"
 LAN1_ROUTE="default via 172.16.1.1"
 
-mkdir -p "/etc/net/ifaces/$LAN1" "/etc/net/ifaces/$LAN2"
+mkdir -p /etc/net/ifaces/$LAN1
+mkdir -p /etc/net/ifaces/$LAN2
+
 
 echo "TYPE=eth" > /etc/net/ifaces/$LAN1/options
-echo "$LAN1_IP" > "/etc/net/ifaces/$LAN1/ipv4address"
-echo "$LAN1_ROUTE" > "/etc/net/ifaces/$LAN1/ipv4route"
+echo "$LAN1_IP" > /etc/net/ifaces/$LAN1/ipv4address
+echo "$LAN1_ROUTE" > /etc/net/ifaces/$LAN1/ipv4route
 
 echo "TYPE=eth" > /etc/net/ifaces/$LAN2/options
-echo "nameserver	8.8.8.8" > "/etc/resolv.conf"
+echo "nameserver	8.8.8.8" > /etc/resolv.conf
 
 for entry in "${VLAN_LIST[@]}"; do
     vid="${entry%%:*}"
     ip_cidr="${entry##*:}"
     vlan_iface="$VLAN_PARENT.$vid"
 
-	mkdir -p "/etc/net/ifaces/$vlan_iface"
+	mkdir -p /etc/net/ifaces/$vlan_iface
 
-	echo "TYPE=vlan" > "/etc/net/ifaces/$vlan_iface/options"
-	echo "HOST=$VLAN_PARENT" >> "/etc/net/ifaces/$vlan_iface/options"
-	echo "VID=$vid" >> "/etc/net/ifaces/$vlan_iface/options"
-	echo "$ip_cidr" > "/etc/net/ifaces/$vlan_iface/ipv4address"
+	echo "TYPE=vlan" > /etc/net/ifaces/$vlan_iface/options
+	echo "HOST=$VLAN_PARENT" >> /etc/net/ifaces/$vlan_iface/options
+	echo "VID=$vid" >> /etc/net/ifaces/$vlan_iface/options
+	echo "$ip_cidr" > /etc/net/ifaces/$vlan_iface/ipv4address
 done
 
 
