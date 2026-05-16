@@ -116,6 +116,7 @@ exit
 
 EOF
 
+systemctl restart frr
 
 apt-get update && apt-get install dhcp-server -y
 
