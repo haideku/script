@@ -8,8 +8,6 @@ fi
 hostnamectl set-hostname hq-rtr.au-team.irpo
 exec bash
 
-apt-get update && apt-get dist-upgrade -y
-
 VLAN_LIST=(
     "100:192.168.100.1/27"
     "200:192.168.200.1/28"
@@ -33,6 +31,10 @@ LAN1_ROUTE="default via 172.16.1.1"
 
 mkdir -p "/etc/net/ifaces/$LAN1" "/etc/net/ifaces/$LAN2"
 
+echo "TYPE=eth" > /etc/net/ifaces/$LAN1/options
+echo "$LAN1_IP" > "/etc/net/ifaces/$LAN1/ipv4address"
+echo "$LAN1_ROUTE" > "/etc/net/ifaces/$LAN1/ipv4route"
+
 echo "TYPE=eth" > /etc/net/ifaces/$LAN2/options
 echo "nameserver	8.8.8.8" > "/etc/resolv.conf"
 
@@ -54,6 +56,10 @@ sed -i 's/^net\.ipv4\.ip_forward = 0/net.ipv4.ip_forward = 1/' /etc/net/sysctl.c
 if ! grep -q '^net\.ipv4\.ip_forward = 1' /etc/net/sysctl.conf; then
 	echo 'net.ipv4.ip_forward = 1' >> /etc/net/sysctl.conf
 fi
+
+systemctl restart network
+
+apt-get update && apt-get dist-upgrade -y
 
 mkdir -p /etc/net/ifaces/gre1
 
@@ -92,9 +98,5 @@ exit
 
 apt-get install iptables
 
-
-echo "TYPE=eth" > /etc/net/ifaces/$LAN1/options
-echo "$LAN1_IP" > "/etc/net/ifaces/$LAN1/ipv4address"
-echo "$LAN1_ROUTE" > "/etc/net/ifaces/$LAN1/ipv4route"
 
 systemctl restart network
