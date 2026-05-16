@@ -31,6 +31,7 @@ LAN2_NET="172.16.2.0/28"
 
 hostnamectl set-hostname ISP 2>/dev/nill || hostaname ISP
 hostname ISP
+exec bash
 
 mkdir -p "/etc/net/ifaces/$WAN"
 echo "TYPE=eth" > /etc/net/ifaces/$WAN/options
