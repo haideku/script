@@ -42,12 +42,14 @@ server {
 EOF
 
 ln -s /etc/nginx/sites-available.d/default.conf /etc/nginx/sites-enabled.d/
+systemctl enable --now nginx
+
 
 htpasswd -c /etc/nginx/.htpasswd WEB
 
 
 
-systemctl enable --now nginx
+
 systemctl restart nginx
 
 
