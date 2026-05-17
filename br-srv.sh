@@ -22,6 +22,7 @@ mkdir -p /etc/net/ifaces/$LAN1
 
 echo "$LAN_IP" > /etc/net/ifaces/$LAN1/ipv4address
 echo "$LAN_ROUTE" > /etc/net/ifaces/$LAN1/ipv4route
+echo "TYPE=eth" > /etc/net/ifaces/$LAN1/options
 echo $'search au-team.irpo\nnameserver 192.168.100.2' > /etc/net/ifaces/$LAN1/resolv.conf
 systemctl restart network
 
