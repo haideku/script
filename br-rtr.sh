@@ -102,6 +102,9 @@ echo "server 172.16.2.1 iburst" >> /etc/chrony.conf
 systemctl restart chronyd
 
 
+iptables -t nat -A POSTROUTING -i $LAN1 -p tcp --dport 2026 -j DNAT --to-destination 192.168.100.2:2026
+iptables -t nat -A POSTROUTING -i $LAN1 -p tcp --dport 8080 -j DNAT --to-destination 192.168.100.2:80
+iptables-save >> /etc/sysconfig/iptables
 
 
 exec bash
