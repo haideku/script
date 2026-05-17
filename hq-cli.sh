@@ -37,5 +37,8 @@ sed -i "s/^pool/#pool/" /etc/chrony.conf
 echo "server 172.16.1.1 iburst" >> /etc/chrony.conf
 systemctl restart chronyd
 
+echo "172.16.1.1 web.au-team.irpo" >> /etc/hosts
+echo "172.16.2.1 docker.au-team.irpo" >> /etc/hosts
+
 
 exec bash
