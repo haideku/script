@@ -33,4 +33,9 @@ systemctl restart network
 
 apt-get update && apt-get dist-upgrade -y
 
+sed -i "s/^pool/#pool/" /etc/chrony.conf
+echo "server 172.16.1.1 iburst" >> /etc/chrony.conf
+systemctl restart chronyd
+
+
 exec bash
