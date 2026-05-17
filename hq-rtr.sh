@@ -52,6 +52,7 @@ for entry in "${VLAN_LIST[@]}"; do
 	echo "$ip_cidr" > "/etc/net/ifaces/$vlan_iface/ipv4address"
 done
 
+echo $'search	au-team.irpo\nnameserver	192.168.100.2' > /etc/net/ifaces/$VLAN_PARENT.100/resolv.conf
 
 sed -i 's/^net\.ipv4\.ip_forward = 0/net.ipv4.ip_forward = 1/' /etc/net/sysctl.conf
 if ! grep -q '^net\.ipv4\.ip_forward = 1' /etc/net/sysctl.conf; then
@@ -135,27 +136,6 @@ EOF
 
 systemctl enable --now dhcpd.service
 
-apt-get update && apt-get install dnsmasq -y
-
-cat <<'EOF' > /etc/dnsmasq.conf
-no-hosts
-server=77.88.8.8
-cache-size=1000
-all-servers
-no-negcache
-interface=*
-host-record=hq-rtr.au-team.irpo,192.168.100.1
-host-record=hq-rtr.au-team.irpo,192.168.200.1
-host-record=hq-rtr.au-team.irpo,192.168.99.1
-host-record=hq-srv.au-team.irpo,192.168.100.2
-host-record=hq-cli.au-team.irpo,192.168.200.2
-address=/br-rtr.au-team.irpo/192.168.0.1
-address=/br-srv.au-team.irpo/192.168.0.2
-address=/docker.au-team.irpo/172.16.1.1
-address=/web.au-team.irpo/172.16.2.1
-EOF
-
-systemctl enable --now dnsmasq.service
 
 timedatectl set-timezone Asia/Vladivostok
 systemctl restart network
