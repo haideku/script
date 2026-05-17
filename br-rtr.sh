@@ -96,6 +96,14 @@ systemctl restart frr
 
 timedatectl set-timezone Asia/Vladivostok
 systemctl restart network
+
+sed -i "s/^pool/#pool/" /etc/chrony.conf
+echo "server 172.16.2.1 iburst" >> /etc/chrony.conf
+systemctl restart chronyd
+
+
+
+
 exec bash
 
 
