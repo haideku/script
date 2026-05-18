@@ -5,8 +5,6 @@ if [[ $EUID -ne 0 ]]; then
 	exit 1
 fi
 
-hostnamectl set-hostname hq-cli.au-team.irpo
-
 ALL_IFACES=()
 for iface in $(ls /sys/class/net | sort); do
 	[[ "$iface" == "lo" ]] && continue
@@ -14,6 +12,11 @@ for iface in $(ls /sys/class/net | sort); do
 done
 
 LAN1="${ALL_IFACES[0]}"
+
+echo "Введите hostname: (hq-cli.au-team.irpo"
+read HOSTNAME
+
+hostnamectl set-hostname $HOSTNAME
 
 VLAN="$LAN1.200"
 
