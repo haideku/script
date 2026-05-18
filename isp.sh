@@ -20,7 +20,7 @@ done
 LAN1="${ALL_IFACES[0]}"
 LAN2="${ALL_IFACES[1]}"
 
-echo "Введите hostname:"
+echo "Введите hostname: (ISP)"
 read HOSTNAME
 
 echo "Введите IP и префикс для LAN1-интерфейса (например 172.16.1.1/28):"
