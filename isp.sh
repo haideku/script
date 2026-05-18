@@ -29,12 +29,17 @@ read LAN1_IP
 echo "Введите IP и префикс для LAN2-интерфейса (например 172.16.2.1/28):"
 read LAN2_IP
 
+echo "Введите маршрут для LAN1-интерфейса (default via 172.16.1.2):"
+read LAN1_ROUTE
 
-LAN1_ROUTE="default via 172.16.1.2"
-LAN2_ROUTE="default via 172.16.2.2"
+echo "Введите маршрут для LAN2-интерфейса (default via 172.16.2.2):"
+read LAN2_ROUTE
 
-LAN1_NET="172.16.1.0/28"
-LAN2_NET="172.16.2.0/28"
+echo "Введите подсеть для iptables (172.16.1.0/28):"
+read LAN1_NET
+
+echo "Введите подсеть для iptables (172.16.2.0/28):"
+read LAN2_NET
 
 hostnamectl set-hostname $HOSTNAME
 
@@ -56,7 +61,7 @@ echo "$LAN2_IP" > "/etc/net/ifaces/$LAN2/ipv4address"
 echo "$LAN1_ROUTE" > "/etc/net/ifaces/$LAN1/ipv4route"
 echo "$LAN2_ROUTE" > "/etc/net/ifaces/$LAN2/ipv4route"
 
-echo "nameserver	8.8.8.8" > "/etc/resolv.conf"
+echo "nameserver	8.8.8.8" > "/etc/net/ifaces/$WAN/resolv.conf"
 
 apt-get update && apt-get dist-upgrade -y
 apt-get install iptables -y
