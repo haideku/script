@@ -24,8 +24,14 @@ LAN2="${ALL_IFACES[1]}"
 
 VLAN_PARENT="$LAN2"
 
-LAN1_IP="172.16.1.2/28"
-LAN1_ROUTE="default via 172.16.1.1"
+echo "Введите hostname: (hq-rtr.au-team.irpo)"
+read HOSTNAME
+
+echo "Введите IP и префикс для LAN1-интерфейса (например 172.16.1.2/28):"
+read LAN1_IP
+
+echo "Введите маршрут для LAN1-интерфейса (default via 172.16.1.1):"
+read LAN1_ROUTE
 
 mkdir -p "/etc/net/ifaces/$LAN1"
 mkdir -p "/etc/net/ifaces/$LAN2"
@@ -77,14 +83,19 @@ systemctl enable --now iptables.service
 
 mkdir -p "/etc/net/ifaces/gre1"
 
+echo "Введите IP br-rtr для gre туннеля: (172.16.2.2)"
+read BR_IP
+
 echo "TYPE=iptun" > /etc/net/ifaces/gre1/options
 echo "TUNTYPE=gre" >> /etc/net/ifaces/gre1/options
-echo "TUNLOCAL=172.16.1.2" >> /etc/net/ifaces/gre1/options
-echo "TUNREMOTE=172.16.2.2" >> /etc/net/ifaces/gre1/options
+echo "TUNLOCAL=$LAN1_IP" >> /etc/net/ifaces/gre1/options
+echo "TUNREMOTE=$BR_IP" >> /etc/net/ifaces/gre1/options
 echo "TUNOPTIONS='ttl 64'" >> /etc/net/ifaces/gre1/options
 echo "HOST=$LAN1" >> /etc/net/ifaces/gre1/options
 
-echo "10.10.10.1/30" > "/etc/net/ifaces/gre1/ipv4address"
+echo "Введите IP и префикс для gre туннеля: (10.10.10.1/30)"
+read GRE_IP
+echo "$GRE_IP" > "/etc/net/ifaces/gre1/ipv4address"
 
 systemctl restart network
 
