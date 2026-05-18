@@ -5,8 +5,6 @@ if [[ $EUID -ne 0 ]]; then
 	exit 1
 fi
 
-hostnamectl set-hostname br-srv.au-team.irpo
-
 ALL_IFACES=()
 for iface in $(ls /sys/class/net | sort); do
 	[[ "$iface" == "lo" ]] && continue
@@ -15,8 +13,14 @@ done
 
 LAN1="${ALL_IFACES[0]}"
 
-LAN_IP="192.168.0.2/28"
-LAN_ROUTE="default via 192.168.0.1"
+echo "Введите hostname: (br-srv.au-team.irpo)"
+read HOSTNAME
+echo "Введите IP и префикс для LAN-интерфейса: (192.168.0.2/28)"
+read LAN_IP
+echo "Введите маршрут для LAN-интерфейса: (default via 192.168.0.1)"
+read LAN_ROUTE
+
+hostnamectl set-hostname $HOSTNAME
 
 mkdir -p /etc/net/ifaces/$LAN1
 
