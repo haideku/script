@@ -5,8 +5,6 @@ if [[ $EUID -ne 0 ]]; then
 	exit 1
 fi
 
-hostnamectl set-hostname hq-srv.au-team.irpo
-
 ALL_IFACES=()
 for iface in $(ls /sys/class/net | sort); do
 	[[ "$iface" == "lo" ]] && continue
@@ -21,6 +19,8 @@ echo "Введите IP и префикс для LAN-интерфейса: (192.
 read LAN1_IP
 echo "Введите маршрут для LAN-интерфейса: (default via 192.168.100.1)"
 read LAN1_ROUTE
+
+hostnamectl set-hostname $HOSTNAME
 
 VLAN="$LAN1.100"
 
