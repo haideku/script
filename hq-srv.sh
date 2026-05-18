@@ -15,9 +15,12 @@ done
 
 LAN1="${ALL_IFACES[0]}"
 
-
-LAN1_IP="192.168.100.2/27"
-LAN1_ROUTE="default via 192.168.100.1"
+echo "Введите hostname: (hq-srv.au-team.irpo)"
+read HOSTNAME
+echo "Введите IP и префикс для LAN-интерфейса: (192.168.100.2/27)"
+read LAN1_IP
+echo "Введите маршрут для LAN-интерфейса: (default via 192.168.100.1)"
+read LAN1_ROUTE
 
 VLAN="$LAN1.100"
 
