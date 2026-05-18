@@ -5,7 +5,7 @@ if [[ $EUID -ne 0 ]]; then
 	exit 1
 fi
 
-hostnamectl set-hostname br-rtr.au-team.irpo
+
 
 ALL_IFACES=()
 for iface in $(ls /sys/class/net | sort); do
@@ -16,10 +16,19 @@ done
 LAN1="${ALL_IFACES[0]}"
 LAN2="${ALL_IFACES[1]}"
 
-LAN1_IP="172.16.2.2/28"
-LAN2_IP="192.168.0.1/28"
+echo "Введите hostname: (br-rtr.au-team.irpo)"
+read HOSTNAME
 
-LAN1_ROUTE="default via 172.16.2.1"
+echo "Введите IP и префикс для LAN1-интерфейса (например 172.16.2.2/28):"
+read LAN1_IP
+
+echo "Введите IP и префикс для LAN2-интерфейса (например 192.168.0.1/28):"
+read LAN2_IP
+
+echo "Введите маршрут для LAN1-интерфейса (default via 172.16.2.1):"
+read LAN1_ROUTE
+
+hostnamectl set-hostname $HOSTNAME
 
 mkdir -p "/etc/net/ifaces/$LAN1"
 mkdir -p "/etc/net/ifaces/$LAN2"
@@ -43,14 +52,20 @@ fi
 
 mkdir -p "/etc/net/ifaces/gre1"
 
+echo "Введите IP HQ-RTR для GRE туннеля (например 172.16.1.2):"
+read HQ_IP
+
 echo "TYPE=iptun" > /etc/net/ifaces/gre1/options
 echo "TUNTYPE=gre" >> /etc/net/ifaces/gre1/options
-echo "TUNLOCAL=172.16.2.2" >> /etc/net/ifaces/gre1/options
-echo "TUNREMOTE=172.16.1.2" >> /etc/net/ifaces/gre1/options
+echo "TUNLOCAL=$LAN1_IP" >> /etc/net/ifaces/gre1/options
+echo "TUNREMOTE=$HQ_IP" >> /etc/net/ifaces/gre1/options
 echo "TUNOPTIONS='ttl 64'" >> /etc/net/ifaces/gre1/options
 echo "HOST=$LAN1" >> /etc/net/ifaces/gre1/options
 
-echo "10.10.10.2/30" > "/etc/net/ifaces/gre1/ipv4address"
+echo "Введите IP и префикс для GRE туннеля: (10.10.10.2/30)
+read GRE_IP
+
+echo "$GRE_IP" > "/etc/net/ifaces/gre1/ipv4address"
 
 systemctl restart network
 
