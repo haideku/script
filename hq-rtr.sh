@@ -5,8 +5,6 @@ if [[ $EUID -ne 0 ]]; then
 	exit 1
 fi
 
-hostnamectl set-hostname hq-rtr.au-team.irpo
-
 VLAN_LIST=(
     "100:192.168.100.1/27"
     "200:192.168.200.1/24"
@@ -32,6 +30,8 @@ read LAN1_IP
 
 echo "Введите маршрут для LAN1-интерфейса (default via 172.16.1.1):"
 read LAN1_ROUTE
+
+hostnamectl set-hostname $HOSTNAME
 
 mkdir -p "/etc/net/ifaces/$LAN1"
 mkdir -p "/etc/net/ifaces/$LAN2"
