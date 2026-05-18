@@ -20,8 +20,15 @@ done
 LAN1="${ALL_IFACES[0]}"
 LAN2="${ALL_IFACES[1]}"
 
-LAN1_IP="172.16.1.1/28"
-LAN2_IP="172.16.2.1/28"
+echo "Введите hostname:"
+read HOSTNAME
+
+echo "Введите IP и префикс для LAN1-интерфейса (например 172.16.1.1/28):"
+read LAN1_IP
+
+echo "Введите IP и префикс для LAN2-интерфейса (например 172.16.2.1/28):"
+read LAN2_IP
+
 
 LAN1_ROUTE="default via 172.16.1.2"
 LAN2_ROUTE="default via 172.16.2.2"
@@ -29,8 +36,7 @@ LAN2_ROUTE="default via 172.16.2.2"
 LAN1_NET="172.16.1.0/28"
 LAN2_NET="172.16.2.0/28"
 
-hostnamectl set-hostname ISP 2>/dev/nill || hostaname ISP
-hostname ISP
+hostnamectl set-hostname $HOSTNAME
 
 mkdir -p "/etc/net/ifaces/$WAN"
 echo "TYPE=eth" > /etc/net/ifaces/$WAN/options
